@@ -109,18 +109,18 @@ here:
                 }
                 // Asking If user wants to put a verifier question
                 char a;
-                printf("\n\nDo you want to Add a Verifier Question In case you forget your password?\n Press Y to confirm:");
+                printf("\n\nDo you want to Add a Verifier, In case you forget your password?\n Press Y to confirm:");
                 scanf("%c", &a);
                 fflush(stdin);
                 if (a == 'Y' || a == 'y')
 {
-                    printf("\nWhen you born:");
+                    printf("\nEnter a code(this should be known only by you and it can't be changed):\t");
                     input(user.verify);
                     printf("\n\nThis must be remembered to change the passcode!!!");  
                 }
 else
 {
-                    printf("Password Yaad Rakhne Feri");
+                    printf("\nDon't Forget the passcode then");
                 }
 
                 fwrite(&user, sizeof(struct user), 1, p);
