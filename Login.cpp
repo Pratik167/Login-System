@@ -3,7 +3,6 @@
 #include <string.h>
 #include <conio.h>
 #include <windows.h>
-
 #define ENTER 13 // Ascii value defining
 #define BKSPC 8
 
@@ -64,7 +63,8 @@ int main()
     printf("\n 1. Signup");
     printf("\n 2. Login");
     printf("\n 3. All Detail");
-    printf("\n 4. Exit");
+    printf("\n 4. Delete Records");
+    printf("\n 5. Exit");
 here:
     printf("\n\t\t\t\tYour Choice:\t");
     scanf("%d", &opt);
@@ -76,13 +76,13 @@ here:
         	printf("Redirecting Please Wait");
         	for (int q=0;q<3;q++) 
 					{
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
-                        Sleep(300);
+                        Sleep(200);
                         printf("\b \b");
                         printf("\b \b");
                         printf("\b \b");
@@ -93,8 +93,34 @@ here:
             input(user.name); // yo function bhaye paxi fflush garnu pardaina
             printf(" Enter Your Number:\t");
             input(user.phone);
-            printf(" Enter Username:\t");
-            input(user.username);
+            	while (1) 
+    				{
+        				int username_exists = 0;
+        				printf(" Enter Username:\t");
+        				input(user.username);
+
+        				p = fopen("P:\\Login2\\Users.txt", "r");
+        				if (p != NULL) 
+        				{
+            				struct user temp;
+            				while (fread(&temp, sizeof(struct user), 1, p)) 
+            				{
+                				if (strcmp(temp.username, user.username) == 0) 
+                				{
+                    				username_exists = 1;
+                    				printf("\n\a Username already exists! Please choose a different username.\n");
+                    				
+                    				break;
+                				}
+            				}
+            				fclose(p);
+        				}
+        				if (!username_exists) 
+        				{
+            				break;  // If username is unique,it goes out of the loop and moves on
+        				}
+    }
+            confirmpassword:
             printf(" Enter Password:\t");
             inputpass(user.password); // encryption function is used
             printf("\nEnter Confirmation Password:");
@@ -105,7 +131,7 @@ here:
                 p = fopen("P:\\Login2\\Users.txt", "a+");
                 if (p == NULL) 
 				{
-                    perror("Error opening file");// just shows the error perror le print
+                    printf("Error opening file");// just shows the error printf le print
                     break;
                 }
                 // Asking If user wants to put a verifier question
@@ -129,21 +155,21 @@ here:
                 if (fwrite != 0) 
 				{
                     printf("\n\n\t\t\t\tLoading");
-                    for (int q = 0; q < 3; q++) 
+                    for (int q=0;q<3;q++) 
 					{
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
-                        Sleep(300);
+                        Sleep(200);
                         printf("\b \b");
                         printf("\b \b");
                         printf("\b \b");
                     }
                     printf("\n\n Registration Successful");
-
+                    break;
                 } 
 				else 
 				{
@@ -153,8 +179,9 @@ here:
             } 
 			else 
 			{
-                printf("\n\aDid you forget your password!!!!");
+                printf("\n\a Password Do not Match!!!!\n");
             }
+            goto confirmpassword;// in 123
             break;
 
         case 2: 
@@ -162,13 +189,13 @@ here:
 			printf("Redirecting Please Wait");
         	for (int q=0;q<3;q++) 
 					{
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
-                        Sleep(300);
+                        Sleep(200);
                         printf("\b \b");
                         printf("\b \b");
                         printf("\b \b");
@@ -177,8 +204,8 @@ here:
                     printf("\n\t\t\t\t\t------LOGIN------");
             char username[50], passw[50];
             struct user login;
-            int flag = 0;
-            int z = 0;
+            int flag=0;
+            int z=0;//number of tries
 loggin:
 
             printf("\n Enter your username:\t");
@@ -186,8 +213,8 @@ loggin:
             printf("\n Enter your password:\t");
             inputpass(passw);
 
-            p = fopen("P:\\Login2\\Users.txt", "r");
-            if (p == NULL) 
+            p=fopen("P:\\Login2\\Users.txt", "r");
+            if (p==NULL) 
 			{
                 printf("\n\nNo File Detected");
                 break;
@@ -199,11 +226,11 @@ loggin:
                     printf("\n\n\t\t\t\tLoading");
                     for (int q=0;q<3;q++) 
 					{
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
                         Sleep(400);
                         printf("\b \b");
@@ -227,30 +254,30 @@ loggin:
 
                 printf("\nTry again\n\n");
                 z++;
-                while (z > 2 && z < 4) 
+                while (z>2&&z<4) 
 				{
 					printf("\n\nAttempt Limit Reached");
-                    goto teta;
+                    goto teta;// 264 ma xa
                 }
-                goto loggin;
+                goto loggin;//line 208
             }
             // this block of code activates after failed attempt 3 times
 teta:
-            while (z > 2 && z < 4) 
+            while (z>2&& z<4) 
 			{
                 int m;
                 Sleep(2000);
                 system("cls");
                 printf("\n\n\t\t\t\tRedirecting ");
-                    for (int q=0 ; q<3 ; q++) 
+                    for (int q=0;q<3;q++) 
 					{
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
-                        Sleep(300);
+                        Sleep(200);
                         printf("\b \b");
                         printf("\b \b");
                         printf("\b \b");
@@ -281,12 +308,12 @@ mathi:
                             if (strcmp(login.username, username) == 0 && strcmp(login.verify, verify) == 0) 
 							{
                                 printf("\nEnter New Password:");
-                                inputpass(login.password);
-                                fseek(p, -(long)sizeof(struct user), SEEK_CUR);//this line of code takes the cursor back to the necessary user ko username tira, so the pass can be changed
+                                inputpass(login.password);                      // SEEK_SET for beginning of the file, SEEK_END end of file
+                                fseek(p, -(long)sizeof(struct user), SEEK_CUR);// SEEK_CUR means current position, this line of code takes the cursor back to the necessary user ko username tira, so the pass can be changed
                                 fwrite(&login, sizeof(struct user), 1, p);//the - sign infront of the sizeof is to move the cursor back in the file
                                 printf("\nPassword changed successfully.");
                                 fclose(p);
-                                goto end;
+                                goto end;//in line 331
                             }
                         }
                         printf("\n Please Check your Username!!!");
@@ -299,7 +326,7 @@ mathi:
 
                     default:
                         printf("Wrong input");
-                        goto mathi;
+                        goto mathi;//line 258
                 }
             }
 end:
@@ -311,13 +338,13 @@ end:
 			printf("Redirecting Please Wait");
         	for (int q=0;q<3;q++) 
 					{
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
-                        Sleep(300);
+                        Sleep(200);
                         printf(".");
-                        Sleep(300);
+                        Sleep(200);
                         printf("\b \b");
                         printf("\b \b");
                         printf("\b \b");
@@ -326,7 +353,7 @@ end:
                     printf("\n\t\t\t\t\t------DETAILS------");
             struct user detail;
             p = fopen("P:\\Login2\\Users.txt", "r");
-            if (p == NULL) 
+            if (p==NULL) 
 			{
                 printf("\n\nThere is no User recorded for now");
                 break;
@@ -342,13 +369,89 @@ end:
             fclose(p);
         }
         break;
-        case 4:
+        case 4://deleting a particular file
+        	   printf("Redirecting Please Wait");
+    		for (int q=0;q<3;q++) 
+			{
+        		Sleep(200);
+        		printf(".");
+        		Sleep(200);
+        		printf(".");
+        		Sleep(200);
+        		printf(".");
+        		Sleep(200);
+        		printf("\b \b");
+        		printf("\b \b");
+        		printf("\b \b");
+         	}
+            	system("cls");
+        		printf("\n\t\t\t\t\t------DELETE RECORDS------");
+        		char delete_username[50];// made an array to take input for deletion of the file of the user
+        		printf("\nEnter Username to delete record:\t");
+        		input(delete_username);
+
+        		printf("\nEnter 'DELETE_CONFIRM' to confirm deletion:\t");
+        		char confirm_delete[50];
+        		input(confirm_delete);
+
+        		if (strcmp(confirm_delete, "DELETE_CONFIRM") == 0) /*mathi delete_username bhannne array ma j type gareko thiyo tei namile samma u cant delete the files, 
+        														   	this is done so that user doesn't accidentally delete their record	*/
+	    		{
+            		FILE *temp = fopen("P:\\Login2\\temp.txt","w");// creates the temp(new) file for transferring the 
+            		if (temp==NULL) 
+		    		{
+                		printf("Error creating temporary file");
+                		break;
+            		}
+
+            		p=fopen("P:\\Login2\\Users.txt", "r");
+            		if (p==NULL) 
+		    		{
+                		printf("\n\nNo File Detected");
+                		fclose(temp);
+                		break;
+            		}
+
+            		int deleted=0;// flag to see if the file has been deleeted or not
+            		while (fread(&user, sizeof(struct user), 1, p)) 
+		    		{
+                		if (strcmp(user.username, delete_username) != 0) // checks the entered username(thats going to be deleteed) to the username in the file,
+                														// its transferring the unmatched file to another file, it only goes to else if the useeername are mathced
+			    		{
+                    		fwrite(&user, sizeof(struct user), 1, temp);
+                		} 
+			    		else 
+			    		{
+                    		deleted=1;
+                		}
+            		}
+            		fclose(p);
+            		fclose(temp);
+            		if (deleted==1) 
+		    		{
+                		remove("P:\\Login2\\Users.txt");// yesle chai original file lai delete garxa (this remove and rename function is contained in the stdio.h header file)
+                		rename("P:\\Login2\\temp.txt", "P:\\Login2\\Users.txt");// renames the temporary file to the original file name, hence making the temp file your main file now
+                		printf("\n\nRecord deleted successfully.");
+            		} 
+		    		else 
+		    		{
+                		remove("P:\\Login2\\temp.txt");
+                		printf("\n\nUsername not found.");
+            		}
+        		} 
+	    		else 
+	    		{
+            		printf("\n\nDeletion cancelled.");
+        		}    		
+        	break;
+        	
+        case 5:
             printf("\n\n\t\t\t\t*****Thanks For The Visit*****\n");
             exit(0);
 
         default:
             printf("\n\n\t\t\t\tWrong Input!!! Try Again\n");
-            goto here;
+            goto here;//line 68
             break;
     }
     return 0;
