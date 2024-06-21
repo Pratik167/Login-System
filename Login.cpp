@@ -102,7 +102,7 @@ here:
                     struct user temp;
                     while (fread(&temp, sizeof(struct user), 1, p)) 
 					{
-                        if (strcmp(temp.role, "admin") == 0) 
+                        if (strcmp(temp.role, "admin")==0) 
 						{
                             admin_exists = 1;
                             break;
@@ -168,8 +168,8 @@ here:
                 fflush(stdin);
                 if (a == 'Y' || a == 'y') 
 				{
-                    printf("\n\nThis must be remembered to change the passcode!!!");   
-                    printf("\nPlease Enter a Code U will Remember:");
+                    printf("\n\nThis must be remembered to change the passcode!!!(The Default Code for Customer is 0000)");   
+                    printf("\nPlease Enter The Code:");
                     input(user.verify);
                 } 
 				else 
@@ -269,13 +269,15 @@ here:
             }
             printf("\n\n\n\t\t\t\t Login Success");
 
-            if (strcmp(login.role, "admin") == 0)
+            if (strcmp(login.role,"admin") == 0)//this if else condition check whether admin is logging in or the customer and displays accordingly
             {
-                printf("\n\t\t\t\tWelcome Admin %s", login.username);
+            	system("cls");
+                printf("\n\t\t\t\t------Admin Section------");
             }
-            else
+            if (strcmp(login.role,"customer") == 0)
             {
-                printf("\n\t\t\t\tWelcome Customer %s", login.username);
+            	system("cls");
+                printf("\n\t\t\t\t------Customer Section------");
             }
 
             printf("\n\n|Name:\t%s", login.name);
