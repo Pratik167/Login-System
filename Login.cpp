@@ -13,6 +13,7 @@ struct user
     char password[50];
     char phone[50];
     char verify[50];
+    char role[50];
 };
 //input garna ko lagi function banako, we dont have to use fgets paxi, we can just call this function
 void input(char ch[50]) 
@@ -89,6 +90,32 @@ here:
                     }
                     system("cls");
                     printf("\n\t\t\t\t\tSIGN UP");
+                    printf("\n Are you signing up as an admin or customer? (Enter 'admin' or 'customer'):\t");
+            input(user.role);
+
+            if (strcmp(user.role,"admin")==0) 
+			{
+                int admin_exists = 0;
+                p=fopen("P:\\Login2\\Users.txt","r");
+                if (p!=NULL) 
+				{
+                    struct user temp;
+                    while (fread(&temp, sizeof(struct user), 1, p)) 
+					{
+                        if (strcmp(temp.role, "admin") == 0) 
+						{
+                            admin_exists = 1;
+                            break;
+                        }
+                    }
+                    fclose(p);
+                }
+                if (admin_exists) 
+				{
+                    printf("\n\a An admin already exists! Redirecting to login page...\n");
+                    goto login;
+                }
+            }
             printf("\n Enter Your Full Name:\t");
             input(user.name); // yo function bhaye paxi fflush garnu pardaina
             printf(" Enter Your Number:\t");
@@ -99,7 +126,7 @@ here:
         				printf(" Enter Username:\t");
         				input(user.username);
 
-        				p = fopen("P:\\Login2\\Users.txt", "r");
+        				p=fopen("P:\\Login2\\Users.txt","r");
         				if (p != NULL) 
         				{
             				struct user temp;
@@ -184,155 +211,168 @@ here:
             goto confirmpassword;// in 123
             break;
 
-        case 2: 
-		{
-			printf("Redirecting Please Wait");
-        	for (int q=0;q<3;q++) 
-					{
-                        Sleep(200);
-                        printf(".");
-                        Sleep(200);
-                        printf(".");
-                        Sleep(200);
-                        printf(".");
-                        Sleep(200);
-                        printf("\b \b");
-                        printf("\b \b");
-                        printf("\b \b");
-                    }
-                    system("cls");
-                    printf("\n\t\t\t\t\t------LOGIN------");
-            char username[50], passw[50];
-            struct user login;
-            int flag=0;
-            int z=0;//number of tries
-loggin:
+        case 2:
+{
+    login:
+    printf("Redirecting Please Wait");
+    for (int q = 0; q < 3; q++) 
+    {
+        Sleep(200);
+        printf(".");
+        Sleep(200);
+        printf(".");
+        Sleep(200);
+        printf(".");
+        Sleep(200);
+        printf("\b \b");
+        printf("\b \b");
+        printf("\b \b");
+    }
+    system("cls");
+    printf("\n\t\t\t\t\t------LOGIN------");
 
-            printf("\n Enter your username:\t");
-            input(username);
-            printf("\n Enter your password:\t");
-            inputpass(passw);
+    char username[50], passw[50];
+    struct user login;
+    int flag = 0;
+    int z = 0; // number of tries
 
-            p=fopen("P:\\Login2\\Users.txt", "r");
-            if (p==NULL) 
-			{
-                printf("\n\nNo File Detected");
-                break;
+    loggin:
+
+    printf("\n Enter your username:\t");
+    input(username);
+    printf("\n Enter your password:\t");
+    inputpass(passw);
+
+    p = fopen("P:\\Login2\\Users.txt", "r");
+    if (p == NULL) 
+    {
+        printf("\n\nNo File Detected");
+        break;
+    }
+    while (fread(&login, sizeof(struct user), 1, p))
+    {
+        if (strcmp(login.username, username) == 0 && strcmp(login.password, passw) == 0)
+        {
+            printf("\n\n\t\t\t\tLoading");
+            for (int q = 0; q < 3; q++) 
+            {
+                Sleep(200);
+                printf(".");
+                Sleep(200);
+                printf(".");
+                Sleep(200);
+                printf(".");
+                Sleep(400);
+                printf("\b \b");
+                printf("\b \b");
+                printf("\b \b");
             }
-            while (fread(&login, sizeof(struct user), 1, p))
-			{
-                if (strcmp(login.username, username) == 0 && strcmp(login.password, passw)==0) 
-				{
-                    printf("\n\n\t\t\t\tLoading");
-                    for (int q=0;q<3;q++) 
-					{
-                        Sleep(200);
-                        printf(".");
-                        Sleep(200);
-                        printf(".");
-                        Sleep(200);
-                        printf(".");
-                        Sleep(400);
-                        printf("\b \b");
-                        printf("\b \b");
-                        printf("\b \b");
-                    }
-                    printf("\n\n\n\t\t\t\t Login Success");
-                    printf("\n\t\t\t\tWelcome %s", login.username);
-                    printf("\n\n|Name:\t%s", login.name);
-                    printf("\n|UserName:\t%s", login.username);
-                    printf("\n|Phone:\t%s\n", login.phone);
-                    flag = 1;
-                    break;
-                }
+            printf("\n\n\n\t\t\t\t Login Success");
+
+            if (strcmp(login.role, "admin") == 0)
+            {
+                printf("\n\t\t\t\tWelcome Admin %s", login.username);
+            }
+            else
+            {
+                printf("\n\t\t\t\tWelcome Customer %s", login.username);
             }
 
-            // when password is wrong
-            if (!flag) 
-			{
-                printf("\n\nWrong Username Or Password");
-
-                printf("\nTry again\n\n");
-                z++;
-                while (z>2&&z<4) 
-				{
-					printf("\n\nAttempt Limit Reached");
-                    goto teta;// 264 ma xa
-                }
-                goto loggin;//line 208
-            }
-            // this block of code activates after failed attempt 3 times
-teta:
-            while (z>2&& z<4) 
-			{
-                int m;
-                Sleep(2000);
-                system("cls");
-                printf("\n\n\t\t\t\tRedirecting ");
-                    for (int q=0;q<3;q++) 
-					{
-                        Sleep(200);
-                        printf(".");
-                        Sleep(200);
-                        printf(".");
-                        Sleep(200);
-                        printf(".");
-                        Sleep(200);
-                        printf("\b \b");
-                        printf("\b \b");
-                        printf("\b \b");
-                    }
-mathi:			
-				system("cls");
-				printf("\t\t\t\t-----PASSCODE REDEMPTION-----");
-                printf("\n1. Change PassWord?");
-                printf("\n2. Ki Exit?");
-                printf("\n Choose:");
-                scanf("%d", &m);
-                fgetc(stdin);
-                switch (m) 
-				{
-                    case 1: 
-					{
-                        char verify[50];
-                        printf("When You Born?\t:");
-                        gets(verify);
-                        p = fopen("P:\\Login2\\Users.txt", "r+");
-                        if (p == NULL) 
-						{
-                            printf("\n\nNo File Detected");
-                            break;
-                        }
-                        while (fread(&login, sizeof(struct user), 1, p)) //we just pulling the structure of login instead of the signup wala, and comparing it with the verify qn
-						{
-                            if (strcmp(login.username, username) == 0 && strcmp(login.verify, verify) == 0) 
-							{
-                                printf("\nEnter New Password:");
-                                inputpass(login.password);                      // SEEK_SET for beginning of the file, SEEK_END end of file
-                                fseek(p, -(long)sizeof(struct user), SEEK_CUR);// SEEK_CUR means current position, this line of code takes the cursor back to the necessary user ko username tira, so the pass can be changed
-                                fwrite(&login, sizeof(struct user), 1, p);//the - sign infront of the sizeof is to move the cursor back in the file
-                                printf("\nPassword changed successfully.");
-                                fclose(p);
-                                goto end;//in line 331
-                            }
-                        }
-                        printf("\n Please Check your Username!!!");
-                        fclose(p);
-                        exit(0);
-                    }
-                    case 2:
-                        printf("\n Ok BYE BYE");
-                        exit(0);
-
-                    default:
-                        printf("Wrong input");
-                        goto mathi;//line 258
-                }
-            }
-end:
-            fclose(p);
+            printf("\n\n|Name:\t%s", login.name);
+            printf("\n|UserName:\t%s", login.username);
+            printf("\n|Phone:\t%s\n", login.phone);
+            flag = 1;
             break;
         }
+    }
+
+    // when password is wrong
+    if (!flag) 
+    {
+        printf("\n\nWrong Username Or Password");
+
+        printf("\nTry again\n\n");
+        z++;
+        while (z > 2 && z < 4)
+        {
+            printf("\n\nAttempt Limit Reached");
+            goto teta; // 264 ma xa
+        }
+        goto loggin; //line 208
+    }
+    // this block of code activates after failed attempt 3 times
+    teta:
+    while (z > 2 && z < 4)
+    {
+        int m;
+        Sleep(2000);
+        system("cls");
+        printf("\n\n\t\t\t\tRedirecting ");
+        for (int q = 0; q < 3; q++) 
+        {
+            Sleep(200);
+            printf(".");
+            Sleep(200);
+            printf(".");
+            Sleep(200);
+            printf(".");
+            Sleep(200);
+            printf("\b \b");
+            printf("\b \b");
+            printf("\b \b");
+        }
+    mathi:
+        system("cls");
+        printf("\t\t\t\t-----PASSCODE REDEMPTION-----");
+        printf("\n1. Change PassWord?");
+        printf("\n2. Ki Exit?");
+        printf("\n Choose:");
+        scanf("%d", &m);
+        fgetc(stdin);
+        switch (m)
+        {
+            case 1:
+            {
+                char verify[50];
+                printf("When You Born?\t:");
+                gets(verify);
+                p = fopen("P:\\Login2\\Users.txt", "r+");
+                if (p == NULL)
+                {
+                    printf("\n\nNo File Detected");
+                    break;
+                }
+                while (fread(&login, sizeof(struct user), 1, p))
+                {
+                    if (strcmp(login.username, username) == 0 && strcmp(login.verify, verify) == 0)
+                    {
+                        printf("\nEnter New Password:");
+                        inputpass(login.password); // SEEK_SET for beginning of the file, SEEK_END end of file
+                        fseek(p, -(long)sizeof(struct user), SEEK_CUR); // SEEK_CUR means current position, this line of code takes the cursor back to the necessary user ko username tira, so the pass can be changed
+                        fwrite(&login, sizeof(struct user), 1, p); //the - sign infront of the sizeof is to move the cursor back in the file
+                        printf("\nPassword changed successfully.");
+                        fclose(p);
+                        goto end; //in line 331
+                    }
+                }
+                printf("\n Please Check your Username!!!");
+                fclose(p);
+                exit(0);
+            }
+            case 2:
+                printf("\n Ok BYE BYE");
+                exit(0);
+
+            default:
+                printf("Wrong input");
+                goto mathi; //line 258
+        }
+    }
+    end:
+    fclose(p);
+    break;
+}
+
         case 3: 
 		{
 			printf("Redirecting Please Wait");
@@ -365,6 +405,7 @@ end:
                 printf("\n|Name:\t%s", detail.name);
                 printf("\n|UserName:\t%s", detail.username);
                 printf("\n|Phone:\t%s\n", detail.phone);
+                printf("\n|Role:\t%s\n",detail.role);
             }
             fclose(p);
         }
