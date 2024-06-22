@@ -21,7 +21,7 @@ struct orders
     struct items itm[50];
 };
 //this function generates the top part of your bill, like your restaurants name and the format haru
-void generateBillHeader(char name[50],char date[30])//just a bunch of prints
+void generateBillTop(char name[50],char date[30])//just a bunch of prints
 {
     printf("\n\n");
         printf("\t    Bing Chilling. Restaurant");
@@ -106,7 +106,6 @@ void inputpass(char pass[50])
         }
     }
 }
-
 int main()
 {
     system("color 2");
@@ -361,7 +360,8 @@ here:
         printf("\nPlease enter the number of items:\t");
         scanf("%d",&n);
         ord.numOfItems = n;
-        for(int i=0;i<n;i++){
+        for(int i=0;i<n;i++)
+		{
             fgetc(stdin);
             printf("\n\n");
             printf("Please enter the item %d:\t",i+1);
@@ -374,7 +374,7 @@ here:
             total += ord.itm[i].qty * ord.itm[i].price;
         }
 
-        generateBillHeader(ord.customer,ord.date);
+        generateBillTop(ord.customer,ord.date);
         for(int i=0;i<ord.numOfItems;i++)
 		{
             generateBillBody(ord.itm[i].item,ord.itm[i].qty,ord.itm[i].price);
@@ -386,7 +386,7 @@ here:
 
         if(saveBill == 'y')
 		{
-            fp = fopen("P:\\test\\RestaurantBill.txt","a+");
+            fp = fopen("P:\\invoice\\RestaurantBill.txt","a+");
             fwrite(&ord,sizeof(struct orders),1,fp);
             if(fwrite != 0)
             printf("\nSuccessfully saved");
@@ -398,12 +398,12 @@ here:
 
         case 2:
         system("cls");
-        fp = fopen("P:\\test\\RestaurantBill.txt","r");
+        fp = fopen("P:\\invoice\\RestaurantBill.txt","r");
         printf("\n  *****Your Previous Invoices*****\n");
         while(fread(&order,sizeof(struct orders),1,fp))
 		{
             float tot = 0;
-            generateBillHeader(order.customer,order.date);
+            generateBillTop(order.customer,order.date);
             for(int i=0;i<order.numOfItems;i++)
 			{
                 generateBillBody(order.itm[i].item,order.itm[i].qty,order.itm[i].price);
@@ -419,14 +419,14 @@ here:
         fgets(name,50,stdin);
         name[strlen(name)-1] = 0;
         system("cls");
-        fp = fopen("P:\\test\\RestaurantBill.txt","r");
+        fp = fopen("P:\\invoice\\RestaurantBill.txt","r");
         printf("\t*****Invoice of %s*****",name);
         while(fread(&order,sizeof(struct orders),1,fp))
 		{
             float total = 0;
             if(!strcmp(order.customer,name))
 			{
-            generateBillHeader(order.customer,order.date);
+            generateBillTop(order.customer,order.date);
             for(int i=0;i<order.numOfItems;i++)
 			{
                 generateBillBody(order.itm[i].item,order.itm[i].qty,order.itm[i].price);
