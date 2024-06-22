@@ -20,8 +20,8 @@ struct orders
     int numOfItems;
     struct items itm[50];
 };
-//functions to generate biils
-void generateBillHeader(char name[50],char date[30])
+//this function generates the top part of your bill, like your restaurants name and the format haru
+void generateBillHeader(char name[50],char date[30])//just a bunch of prints
 {
     printf("\n\n");
         printf("\t    Bing Chilling. Restaurant");
@@ -36,7 +36,7 @@ void generateBillHeader(char name[50],char date[30])
         printf("\n---------------------------------------");
         printf("\n\n");
 }
-void generateBillBody(char item[30],int qty, float price)
+void generateBillBody(char item[30],int qty, float price)//this chai displays the item that was ordered and the prices
 {
     printf("%s\t\t",item); 
         printf("%d\t\t",qty); 
@@ -44,12 +44,13 @@ void generateBillBody(char item[30],int qty, float price)
         printf("\n");
 }
 
-void generateBillFooter(float total)
+void generateBillFooter(float total)//yo chai paisa wala part ko lagi
 {
     printf("\n");
-    float dis = 0.1*total;
+    float dis = 0.1*total;//10% discount
     float netTotal=total-dis;
-    float cgst=0.09*netTotal,grandTotal=netTotal + 2*cgst;//netTotal + cgst + sgst
+    float cgst=0.09*netTotal;
+	float grandTotal=netTotal + 2*cgst;//netTotal + cgst + sgst
     printf("---------------------------------------\n");
     printf("Sub Total\t\t\t%.2f",total);
     printf("\nDiscount @10%s\t\t\t%.2f","%",dis);
@@ -118,7 +119,7 @@ int main()
     printf("\n\n\n What would you like to do:");
     printf("\n 1. Signup");
     printf("\n 2. Login");
-    printf("\n 3. Delete your Account);
+    printf("\n 3. Delete your Account");
     printf("\n 4. Exit");
 here:
     printf("\n\t\t\t\tYour Choice:\t");
@@ -339,8 +340,8 @@ here:
                         system("cls");
                         float total = 0;
                         int invoiceFound = 0;
-                        printf("\t============ADV. RESTAURANT============");
-                        printf("\n\nPlease select your prefered operation");
+                        printf("\t============Bing Chilling. RESTAURANT============");
+                        printf("\n\nPlease select what you wanna do");
                         printf("\n\n1.Generate Invoice");
                         printf("\n2.Show all Invoices");
                         printf("\n3.Search Invoice");
@@ -351,7 +352,7 @@ here:
                         fgetc(stdin);
                         switch(opt)
 						{
-                             case 1:
+        case 1:
         system("cls");
         printf("\nPlease enter the name of the customer:\t");
         fgets(ord.customer,50,stdin);
@@ -385,7 +386,7 @@ here:
 
         if(saveBill == 'y')
 		{
-            fp = fopen("P:\\test\\RestaurantBill.dat","a+");
+            fp = fopen("P:\\test\\RestaurantBill.txt","a+");
             fwrite(&ord,sizeof(struct orders),1,fp);
             if(fwrite != 0)
             printf("\nSuccessfully saved");
@@ -397,7 +398,7 @@ here:
 
         case 2:
         system("cls");
-        fp = fopen("P:\\test\\RestaurantBill.dat","r");
+        fp = fopen("P:\\test\\RestaurantBill.txt","r");
         printf("\n  *****Your Previous Invoices*****\n");
         while(fread(&order,sizeof(struct orders),1,fp))
 		{
@@ -418,7 +419,7 @@ here:
         fgets(name,50,stdin);
         name[strlen(name)-1] = 0;
         system("cls");
-        fp = fopen("P:\\test\\RestaurantBill.dat","r");
+        fp = fopen("P:\\test\\RestaurantBill.txt","r");
         printf("\t*****Invoice of %s*****",name);
         while(fread(&order,sizeof(struct orders),1,fp))
 		{
