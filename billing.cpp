@@ -640,7 +640,7 @@ void admin()
 	FILE *tp,*mp,*cp;
 	int adminc,menuc,choice;
 	int newp,find=0;
-	char irem[20];
+	char irem[20],choicem,cprice[20];
 	flag:
  	    	system("cls");
  	    	fflush(stdin);
@@ -669,11 +669,23 @@ void admin()
  					case(1):
  						{
  							flag1:
+ 							struct menus tempmenu;
  				            tp=fopen("P:\\Login2\\menu.txt","a");
  						    fflush(stdin);
- 						    
- 							printf("\nEnter the name of item:");
+  							printf("\nEnter the name of item:");
  							gets(menu.item);
+ 							while(fread(&tempmenu,sizeof(tempmenu),1,tp)==1)
+ 							{
+ 								if(strcmp(tempmenu.item,menu.item)==0)
+ 								{
+ 									printf("The item already exists.Do u wanna change the price of the item");
+ 									scanf("%c",&choicem);
+ 									if(choicem=='y'||choicem=='Y')
+ 									{
+ 										goto flag3;
+									 }
+								 }
+							 }
  							printf("\nEnter the price of item:");
  							scanf("%d",&menu.price);
  							fwrite(&menu,sizeof(menu),1,tp);
@@ -696,9 +708,23 @@ void admin()
 						 }
 					case(2):
 						{
-							flag2:
+					      flag2:
+					      find=0;
+						  tp=fopen("P:\\Login2\\menu.txt","a+");
 						  printf("\nenter the name of item u wanna remove");
 						  scanf("%s",irem);
+						  while(fread(&menu,sizeof(menu),1,tp)==1)
+						  {
+						  	if(strcmp(irem,menu.item)==0)
+						  	{
+						  		find=1;
+							  }
+						  }
+						  if(find==0)
+						  {
+						  	printf("The item doesnt exist");
+						  	goto flag2;
+						  }
 						  mp=fopen("P:\\Login2\\tempmenu.txt","a+");
 						  while(fread(&menu,sizeof(menu),1,tp)==1)
 						  {
@@ -727,20 +753,29 @@ void admin()
 						}
 						case(3):
 							{
-								memset(&irem,'0',sizeof(irem));
 								flag3:
+								find=0;
 								printf("\nenter the name of item you wanna change price of:");
-								scanf("%s",&irem);
+								fflush(stdin);
+								gets(cprice);
+								tp=fopen("P:\\Login2\\menu.txt","a+");
+		                        mp=fopen("P:\\Login2\\tempmenu.txt","a+");
 								while(fread(&menu,sizeof(menu),1,tp)==1)
 							    {
-								  if(strcmp(irem, menu.item)==0)
+							    	 if(strcmp(cprice, menu.item)!=0)
+							    	 {
+							    	 	fwrite(&menu,sizeof(menu),1,mp);
+							    	 	continue;
+									 }
+								  else if(strcmp(cprice, menu.item)==0)
 								  {
 								  	printf("enter the new price:");
 								  	scanf("%d",&newp);
 								  	menu.price=newp;
-								  	fseek(tp,-sizeof(menu),SEEK_CUR); // Move the file pointer back to the beginning of the current record
-                                    fwrite(&menu, sizeof(menu), 1, tp); // Write the updated record back to the file
+								    
+                                    fwrite(&menu, sizeof(menu), 1, mp); // Write the updated record back to the file
                                      find = 1;
+                                    	continue;
 								  }
 									
 								}
@@ -750,6 +785,11 @@ void admin()
 				             	}
 				             	else
 				             	{
+				             		done:
+				             			fclose(tp);
+				             			fclose(mp);
+				             			remove("menu.txt");
+				             			rename("tempmenu.txt","menu.txt");
 								   printf("price changed succesfully!");
 						           printf("\nDo you wanna remove more item,if yes press y");
 						        
@@ -762,6 +802,7 @@ void admin()
                                  	}
 							        else
 							       {
+							       	fclose(tp);
 							  	      goto flag;
 							        }
 						      }
@@ -784,8 +825,8 @@ void admin()
 		      }
 		      case 2:
 		      	{
-		      		cp=fopen("order.txt","r");
-		      		tp=fopen("customer.txt","r");
+		      		cp=fopen("P:\\Login2\\order.txt","r");
+		      		tp=fopen("P:\\Login2\\customer.txt","r");
 		      		rewind(cp);
 		      		if(cp==NULL)
 		      		{
