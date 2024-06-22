@@ -386,9 +386,9 @@ here:
         printf("\nDo you want to save the invoice [y/n]:\t");
         scanf("%s",&saveBill);
 
-        if(saveBill == 'y'||saveBill == 'Y')//invoice save garne bhayee y press garne
+        if(saveBill == 'y')//invoice save garne bhayee y press garne
 		{
-            fp = fopen("P:\\invoice\\RestaurantBill.txt","a+");//if presseeed y it opens this restaurantbill.txt file ani fwrite le invoice save garxa
+            fp = fopen("P:\\test\\RestaurantBill.txt","a+");//if presseeed y it opens this restaurantbill.txt file ani fwrite le invoice save garxa
             fwrite(&ord,sizeof(struct orders),1,fp);
             if(fwrite != 0)
             printf("\nSuccessfully saved");
@@ -400,7 +400,7 @@ here:
 
         case 2:
         system("cls");
-        fp = fopen("P:\\invoice\\RestaurantBill.txt","r");
+        fp = fopen("P:\\test\\RestaurantBill.txt","r");
         printf("\n  *****Your Previous Invoices*****\n");
         while(fread(&order,sizeof(struct orders),1,fp))
 		{
@@ -421,7 +421,7 @@ here:
         fgets(name,50,stdin);
         name[strlen(name)-1] = 0;
         system("cls");
-        fp = fopen("P:\\invoice\\RestaurantBill.txt","r");
+        fp = fopen("P:\\test\\RestaurantBill.txt","r");
         printf("\t*****Invoice of %s*****",name);
         while(fread(&order,sizeof(struct orders),1,fp))
 		{
@@ -466,6 +466,7 @@ here:
             }
 
             fclose(p);
+
 
             // When username or password is incorrect
             if (!flag) 
