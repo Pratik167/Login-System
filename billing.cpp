@@ -6,61 +6,6 @@
 #define ENTER 13 // Ascii value defining
 #define BKSPC 8
 
-struct items
-{
-    char item[20];
-    float price;
-    int qty;
-};
-
-struct orders
-{
-    char customer[50];
-    char date[50];
-    int numOfItems;
-    struct items itm[50];
-};
-//functions to generate biils
-void generateBillHeader(char name[50],char date[30])
-{
-    printf("\n\n");
-        printf("\t    Bing Chilling. Restaurant");
-        printf("\n\t   -----------------");
-        printf("\nDate:%s",date);
-        printf("\nInvoice To: %s",name);
-        printf("\n");
-        printf("---------------------------------------\n");
-        printf("Items\t\t");
-        printf("Qty\t\t");
-        printf("Total\t\t");
-        printf("\n---------------------------------------");
-        printf("\n\n");
-}
-void generateBillBody(char item[30],int qty, float price)
-{
-    printf("%s\t\t",item); 
-        printf("%d\t\t",qty); 
-        printf("%.2f\t\t",qty * price); 
-        printf("\n");
-}
-
-void generateBillFooter(float total)
-{
-    printf("\n");
-    float dis = 0.1*total;
-    float netTotal=total-dis;
-    float cgst=0.09*netTotal,grandTotal=netTotal + 2*cgst;//netTotal + cgst + sgst
-    printf("---------------------------------------\n");
-    printf("Sub Total\t\t\t%.2f",total);
-    printf("\nDiscount @10%s\t\t\t%.2f","%",dis);
-    printf("\n\t\t\t\t-------");
-    printf("\nNet Total\t\t\t%.2f",netTotal);
-    printf("\nCGST @9%s\t\t\t%.2f","%",cgst);
-    printf("\nSGST @9%s\t\t\t%.2f","%",cgst);
-    printf("\n---------------------------------------");
-    printf("\nGrand Total\t\t\t%.2f",grandTotal);
-    printf("\n---------------------------------------\n");
-}
 struct user 
 {
     char name[50];
@@ -69,7 +14,156 @@ struct user
     char phone[50];
     char verify[50];
     char role[50];
-};
+}login;
+
+ struct menus
+ {
+ 	char item[20];
+ 	int price;
+ }menu;
+ struct menuorder
+ {
+ 	char custname[50];
+ 	char item[20];
+ 	int price;
+ 	int quantity;
+ 	
+ }orderdetail;
+ struct customers
+ {
+ 	char cname[50];
+    int discount;
+    int servicetax;
+    int ntotal;
+ 	int gtotal;
+ 	int sumprice;
+ }custdetail;
+void admin();
+void customer(char customername[50])
+{ 
+     FILE *tp,*cp,*mp;
+    char irem[20],name[50];
+    int quantity,price,tprice,sumprice;
+    int netprice=0,check=0,dis=0,servicet=0,gtotal=0,namec=0;
+    char customerc,abill;
+    printf("enter your name");
+    fflush(stdin);
+    gets(name);
+    strcpy(custdetail.cname,name);
+	      tp=fopen("menu.txt","r");
+	 	  rewind(tp);
+	 	  memset(&irem,'0',sizeof(irem));
+	 	  strcpy(custdetail.cname,name);
+	 	  strcpy(orderdetail.custname,name);
+		  system("cls");
+		  cflag:
+	 	  while(fread(&menu,sizeof(menu),1,tp)==1)
+	 	  {
+	 	  	printf("%s",menu.item);
+	 	  	printf(" %d",menu.price);
+	 	  	printf("\n");
+		  }
+		  fclose(tp);
+		  printf("Enter the name of item you wanna order: ");
+		  fflush(stdin);
+		  gets(irem);
+		  printf("Enter the quantity u wanna order");
+		  scanf("%d",&quantity);
+		  tp=fopen("menu.txt","r");
+	      mp=fopen("order.txt","a");
+		  while(fread(&menu,sizeof(menu),1,tp)==1)
+	 	  {
+	 	  	if(strcmp(irem,menu.item)==0)
+	 	  	{
+	 	  		strcpy(orderdetail.item,menu.item);
+	 	  		orderdetail.price=menu.price;
+	 	  		fwrite(&orderdetail,sizeof(orderdetail),1,mp);
+	 	  		price=menu.price*quantity;
+	 	  	    sumprice+=price;
+	 	  	    check=1;
+	 	  		
+			   }
+			   else
+			   {
+			   	continue;
+			   }
+        	}
+        	if(check==0)
+        	{
+        		printf("The item doesnt exist please check and try again");
+        		goto cflag;
+			}
+        printf("\nD you wanna order anything else");
+        fflush(stdin);
+        scanf("%c",&customerc);
+        if(customerc=='y'||customerc=='Y')
+        {
+        	goto cflag;
+		}
+		else
+		{
+	 	  cp=fopen("customer.txt","a");
+			netprice=sumprice;
+			if(sumprice>3000)
+			{
+				dis=sumprice*10/100;
+				printf("discount = %d",dis);
+				netprice-=dis;
+			}
+			servicet=netprice*9/100;
+			gtotal=netprice+servicet;
+			fclose(tp);
+			printf("BILL\n");
+			printf("%s",custdetail.cname);
+			printf("total is %d\n",gtotal);
+			custdetail.gtotal=gtotal;
+			custdetail.discount=dis;
+			custdetail.ntotal=netprice;
+			custdetail.servicetax=servicet;
+			custdetail.sumprice=sumprice;
+			fwrite(&custdetail,sizeof(custdetail),1,cp);
+			fclose(tp);
+		  	fclose(cp);
+		  	fclose(mp);
+		}	
+			printf("Do you wanna see all your bills?");
+			fflush(stdin);
+			scanf("%c",&abill);
+			if(abill=='y'||abill=='Y')
+			{
+				cp=fopen("customer.txt","r");
+				if(cp==NULL)
+			{
+				printf("File not opened");
+			}
+		
+    		while (fread(&custdetail, sizeof(custdetail), 1, cp)==1)
+    		{
+    			if(strcmp(custdetail.cname,name)==0)
+    			{
+    				printf("%s\n",custdetail.cname);
+    				printf("total= %d\n",custdetail.sumprice);
+    				printf("discount= %d\n",custdetail.discount);
+    				printf("net total= %d\n",custdetail.ntotal);
+    				printf("service tax= %d\n",custdetail.servicetax);
+    				printf("grand total=%d\n",custdetail.gtotal);
+    				printf("\n\n");
+    				namec=1;
+				}
+			}
+			rewind(cp);
+			if(namec=0)
+			{
+				printf("Sorry details not found");
+			}
+			fclose(cp);
+		}
+		else
+		{	
+			printf("Thank you for visiting");
+		}	
+		
+}
 //input garna ko lagi function banako, we dont have to use fgets paxi, we can just call this function
 void input(char ch[50]) 
 {
@@ -113,13 +207,14 @@ int main()
     int opt;
     struct user user;
     char confirmpass[50];
-
+    char back;
     printf("\n\t\t\t\t--------Welcome to The Program---------");
     printf("\n\n\n What would you like to do:");
     printf("\n 1. Signup");
     printf("\n 2. Login");
-    printf("\n 3. Delete your Account");
-    printf("\n 4. Exit");
+    printf("\n 3. All Detail");
+    printf("\n 4. Delete Records");
+    printf("\n 5. Exit");
 here:
     printf("\n\t\t\t\tYour Choice:\t");
     scanf("%d", &opt);
@@ -144,19 +239,19 @@ here:
                     }
                     system("cls");
                     printf("\n\t\t\t\t\tSIGN UP");
-                    printf("\n Please Type 'admin' If it is the first time:\t");
+                    printf("\n Are you signing up as an admin or customer? (Enter 'admin' or 'customer'):\t");
             input(user.role);
 
-            if ((strcmp(user.role,"admin")==0)||(strcmp(user.role,"Admin")==0))
+            if (strcmp(user.role,"admin")==0) 
 			{
                 int admin_exists = 0;
-                p=fopen("P:\\invoice\\Users.txt","r");
+                p=fopen("Users.txt","r");
                 if (p!=NULL) 
 				{
                     struct user temp;
                     while (fread(&temp, sizeof(struct user), 1, p)) 
 					{
-                        if (strcmp(temp.role, "admin")==0)
+                        if (strcmp(temp.role, "admin") == 0) 
 						{
                             admin_exists = 1;
                             break;
@@ -180,7 +275,7 @@ here:
         				printf(" Enter Username:\t");
         				input(user.username);
 
-        				p=fopen("P:\\invoice\\Users.txt","r");
+        				p=fopen("Users.txt","r");
         				if (p != NULL) 
         				{
             				struct user temp;
@@ -209,7 +304,7 @@ here:
 
             if (strcmp(user.password, confirmpass) == 0) 
 			{ // confirm pass milxa ki nai
-                p = fopen("P:\\invoice\\Users.txt", "a+");
+                p = fopen("Users.txt", "a+");
                 if (p == NULL) 
 				{
                     printf("Error opening file");// just shows the error printf le print
@@ -222,8 +317,8 @@ here:
                 fflush(stdin);
                 if (a == 'Y' || a == 'y') 
 				{
-                    printf("\n\nThis must be remembered to change the passcode!!!(The Default Code for Customer is 0000)");   
-                    printf("\nPlease Enter The Code:");
+                    printf("\n\nThis must be remembered to change the passcode!!!");   
+                    printf("\nPlease Enter a Code U will Remember:");
                     input(user.verify);
                 } 
 				else 
@@ -265,10 +360,49 @@ here:
             goto confirmpassword;// in 123
             break;
 
-                case 2:
+        case 2:
+{
+    login:
+    printf("Redirecting Please Wait");
+    for (int q = 0; q < 3; q++) 
+    {
+        Sleep(200);
+        printf(".");
+        Sleep(200);
+        printf(".");
+        Sleep(200);
+        printf(".");
+        Sleep(200);
+        printf("\b \b");
+        printf("\b \b");
+        printf("\b \b");
+    }
+    system("cls");
+    printf("\n\t\t\t\t\t------LOGIN------");
+
+    char username[50], passw[50];
+    struct user login;
+    int flag = 0;
+    int z = 0; // number of tries
+
+    loggin:
+
+    printf("\n Enter your username:\t");
+    input(username);
+    printf("\n Enter your password:\t");
+    inputpass(passw);
+
+    p = fopen("Users.txt", "r");
+    if (p == NULL) 
+    {
+        printf("\n\nNo File Detected");
+        break;
+    }
+    while (fread(&login, sizeof(user), 1, p))
+    {
+        if (strcmp(login.username, username) == 0 && strcmp(login.password, passw) == 0)
         {
-            login:
-            printf("Redirecting Please Wait");
+            printf("\n\n\t\t\t\tLoading");
             for (int q = 0; q < 3; q++) 
             {
                 Sleep(200);
@@ -277,279 +411,173 @@ here:
                 printf(".");
                 Sleep(200);
                 printf(".");
-                Sleep(200);
+                Sleep(400);
                 printf("\b \b");
                 printf("\b \b");
                 printf("\b \b");
             }
-            system("cls");
-            printf("\n\t\t\t\t\t------LOGIN------");
+            printf("\n\n\n\t\t\t\t Login Success");
 
-            char username[50], passw[50];
-            struct user login;
-            int flag = 0;
-            int z = 0; // number of tries
-
-            loggin:
-            printf("\n Enter your username:\t");
-            input(username);
-            printf("\n Enter your password:\t");
-            inputpass(passw);
-
-            p = fopen("P:\\invoice\\Users.txt", "r");
-            if (p == NULL) 
+            if (strcmp(login.role, "admin") == 0)
             {
-                printf("\n\nNo File Detected");
+                printf("\n\t\t\t\tWelcome Admin %s", login.username);
+                admin();
+                printf("\npress e to exit  ");
+                fflush(stdin);
+                scanf("%c",&back);
+                if(back=='e'||back=='e')
+                {
+                	exit(0);
+				}
+            }
+            else
+            {
+                printf("\n\t\t\t\tWelcome Customer %s", login.username);
+                customer(username);
+                printf("\npress e to exit  ");
+                fflush(stdin);
+                scanf("%c",&back);
+                if(back=='e'||back=='e')
+                {
+                	printf("Thanks for visiting");
+                	exit(0);
+				}
+            }
+
+            printf("\n\n|Name:\t%s", login.name);
+            printf("\n|UserName:\t%s", login.username);
+            printf("\n|Phone:\t%s\n", login.phone);
+            flag = 1;
+            
+        }
+        
+    }
+
+    // when password is wrong
+    if (!flag) 
+    {
+        printf("\n\nWrong Username Or Password");
+
+        printf("\nTry again\n\n");
+        z++;
+        while (z > 2 && z < 4)
+        {
+            printf("\n\nAttempt Limit Reached");
+            goto teta; // 264 ma xa
+        }
+        goto loggin; //line 208
+    }
+    // this block of code activates after failed attempt 3 times
+    teta:
+    while (z > 2 && z < 4)
+    {
+        int m;
+        Sleep(2000);
+        system("cls");
+        printf("\n\n\t\t\t\tRedirecting ");
+        for (int q = 0; q < 3; q++) 
+        {
+            Sleep(200);
+            printf(".");
+            Sleep(200);
+            printf(".");
+            Sleep(200);
+            printf(".");
+            Sleep(200);
+            printf("\b \b");
+            printf("\b \b");
+            printf("\b \b");
+        }
+    mathi:
+        system("cls");
+        printf("\t\t\t\t-----PASSCODE REDEMPTION-----");
+        printf("\n1. Change PassWord?");
+        printf("\n2. Ki Exit?");
+        printf("\n Choose:");
+        scanf("%d", &m);
+        fgetc(stdin);
+        switch (m)
+        {
+            case 1:
+            {
+                char verify[50];
+                printf("When You Born?\t:");
+                gets(verify);
+                p = fopen("Users.txt", "r+");
+                if (p == NULL)
+                {
+                    printf("\n\nNo File Detected");
+                    break;
+                }
+                while (fread(&login, sizeof(struct user), 1, p))
+                {
+                    if (strcmp(login.username, username) == 0 && strcmp(login.verify, verify) == 0)
+                    {
+                        printf("\nEnter New Password:");
+                        inputpass(login.password); // SEEK_SET for beginning of the file, SEEK_END end of file
+                        fseek(p, -(long)sizeof(struct user), SEEK_CUR); // SEEK_CUR means current position, this line of code takes the cursor back to the necessary user ko username tira, so the pass can be changed
+                        fwrite(&login, sizeof(struct user), 1, p); //the - sign infront of the sizeof is to move the cursor back in the file
+                        printf("\nPassword changed successfully.");
+                        fclose(p);
+                        goto end; //in line 331
+                    }
+                }
+                printf("\n Please Check your Username!!!");
+                fclose(p);
+                exit(0);
+            }
+            case 2:
+                printf("\n Ok BYE BYE");
+                exit(0);
+
+            default:
+                printf("Wrong input");
+                goto mathi; //line 258
+        }
+    }
+    end:
+    fclose(p);
+    break;
+}
+
+        case 3: 
+		{
+			printf("Redirecting Please Wait");
+        	for (int q=0;q<3;q++) 
+					{
+                        Sleep(200);
+                        printf(".");
+                        Sleep(200);
+                        printf(".");
+                        Sleep(200);
+                        printf(".");
+                        Sleep(200);
+                        printf("\b \b");
+                        printf("\b \b");
+                        printf("\b \b");
+                    }
+                    system("cls");
+                    printf("\n\t\t\t\t\t------DETAILS------");
+            struct user detail;
+            p = fopen("Users.txt", "r");
+            if (p==NULL) 
+			{
+                printf("\n\nThere is no User recorded for now");
                 break;
             }
-
-            while (fread(&login, sizeof(struct user), 1, p))
-            {
-                if (strcmp(login.username, username) == 0 && strcmp(login.password, passw) == 0)
-                {
-                    printf("\n\n\t\t\t\tLoading");
-                    for (int q = 0; q < 3; q++) 
-                    {
-                        Sleep(200);
-                        printf(".");
-                        Sleep(200);
-                        printf(".");
-                        Sleep(200);
-                        printf(".");
-                        Sleep(200);
-                        printf("\b \b");
-                        printf("\b \b");
-                        printf("\b \b");
-                    }
-                    printf("\n\n\n\t\t\t\t Login Success");
-
-                    flag = 1;
-                    system("cls");
-
-                    // Add the restaurant billing system code here.
-                    int opt,n;
-                    struct orders ord;
-                    struct orders order;
-                    char saveBill = 'y',contFlag = 'y';
-                    char name[50];
-                    FILE *fp;
-                    //dashboard
-                    while(contFlag == 'y')
-                    {
-                        system("cls");
-                        float total = 0;
-                        int invoiceFound = 0;
-                        printf("\t============ADV. RESTAURANT============");
-                        printf("\n\nPlease select your prefered operation");
-                        printf("\n\n1.Generate Invoice");
-                        printf("\n2.Show all Invoices");
-                        printf("\n3.Search Invoice");
-                        printf("\n4.Exit");
-
-                        printf("\n\nYour choice:\t");
-                        scanf("%d",&opt);
-                        fgetc(stdin);
-                        switch(opt)
-						{
-                             case 1:
-        system("cls");
-        printf("\nPlease enter the name of the customer:\t");
-        fgets(ord.customer,50,stdin);
-        ord.customer[strlen(ord.customer)-1] = 0;
-        strcpy(ord.date,__DATE__);
-        printf("\nPlease enter the number of items:\t");
-        scanf("%d",&n);
-        ord.numOfItems = n;
-        for(int i=0;i<n;i++){
-            fgetc(stdin);
-            printf("\n\n");
-            printf("Please enter the item %d:\t",i+1);
-            fgets(ord.itm[i].item,20,stdin);
-            ord.itm[i].item[strlen(ord.itm[i].item)-1]=0;
-            printf("Please enter the quantity:\t");
-            scanf("%d",&ord.itm[i].qty);
-            printf("Please enter the unit price:\t");
-            scanf("%f",&ord.itm[i].price);
-            total += ord.itm[i].qty * ord.itm[i].price;
-        }
-
-        generateBillHeader(ord.customer,ord.date);
-        for(int i=0;i<ord.numOfItems;i++)
-		{
-            generateBillBody(ord.itm[i].item,ord.itm[i].qty,ord.itm[i].price);
-        }
-        generateBillFooter(total);
-
-        printf("\nDo you want to save the invoice [y/n]:\t");
-        scanf("%s",&saveBill);
-
-        if(saveBill == 'y')
-		{
-            fp = fopen("P:\\test\\RestaurantBill.dat","a+");
-            fwrite(&ord,sizeof(struct orders),1,fp);
-            if(fwrite != 0)
-            printf("\nSuccessfully saved");
-            else 
-            printf("\nError saving");
-            fclose(fp);
-        }
-        break;
-
-        case 2:
-        system("cls");
-        fp = fopen("P:\\test\\RestaurantBill.dat","r");
-        printf("\n  *****Your Previous Invoices*****\n");
-        while(fread(&order,sizeof(struct orders),1,fp))
-		{
-            float tot = 0;
-            generateBillHeader(order.customer,order.date);
-            for(int i=0;i<order.numOfItems;i++)
+            rewind(p);//cursor moves on the first line of the file
+            printf("\n\nAll User Details:\n");
+            while (fread(&detail, sizeof(struct user), 1, p)) //prints all the details of the users.
 			{
-                generateBillBody(order.itm[i].item,order.itm[i].qty,order.itm[i].price);
-                tot+=order.itm[i].qty * order.itm[i].price;
+                printf("\n|Name:\t%s", detail.name);
+                printf("\n|UserName:\t%s", detail.username);
+                printf("\n|Phone:\t%s\n", detail.phone);
+                printf("\n|Role:\t%s\n",detail.role);
             }
-            generateBillFooter(tot);
-        }
-        fclose(fp);
-        break;
-
-        case 3:
-        printf("Enter the name of the customer:\t");
-        fgets(name,50,stdin);
-        name[strlen(name)-1] = 0;
-        system("cls");
-        fp = fopen("P:\\test\\RestaurantBill.dat","r");
-        printf("\t*****Invoice of %s*****",name);
-        while(fread(&order,sizeof(struct orders),1,fp))
-		{
-            float total = 0;
-            if(!strcmp(order.customer,name))
-			{
-            generateBillHeader(order.customer,order.date);
-            for(int i=0;i<order.numOfItems;i++)
-			{
-                generateBillBody(order.itm[i].item,order.itm[i].qty,order.itm[i].price);
-                total+=order.itm[i].qty * order.itm[i].price;
-            }
-            generateBillFooter(total);
-            invoiceFound = 1;
-            }
-        
-        }
-        if(!invoiceFound)
-		{
-            printf("Sorry the invoice for %s doesnot exists",name);
-        }
-        fclose(fp);
-        break;
-
-    case 4:
-    printf("\n\t\t Bye Bye :)\n\n");
-    exit(0);
-    break;
-
-    default:
-    printf("Sorry invalid option");
-    break;
-    }
-    printf("\nDo you want to perform another operation?[y/n]:\t");
-    scanf("%s",&contFlag);
-    }
-    printf("\n\t\t Bye Bye :)\n\n");
-    printf("\n\n");
-
-                    break; // Exiting the loop once login is successful
-                }
-            }
-
             fclose(p);
-
-            // When username or password is incorrect
-            if (!flag) 
-            {
-                z++;
-                printf("\n\nWrong Username Or Password");
-                if (z >= 3) 
-                {
-                    // Maximum attempts reached
-                    printf("\n\nAttempt Limit Reached. Redirecting to password recovery...");
-                    goto teta;
-                }
-                printf("\nTry again\n\n");
-                goto loggin;
-            }
-
-            // Password recovery block after 3 failed attempts
-            teta:
-            while (z >= 3)
-            {
-                int m;
-                Sleep(2000);
-                system("cls");
-                printf("\n\n\t\t\t\tRedirecting ");
-                for (int q = 0; q < 3; q++) 
-                {
-                    Sleep(200);
-                    printf(".");
-                    Sleep(200);
-                    printf(".");
-                    Sleep(200);
-                    printf(".");
-                    Sleep(200);
-                    printf("\b \b");
-                    printf("\b \b");
-                    printf("\b \b");
-                }
-                system("cls");
-                printf("\t\t\t\t-----PASSCODE REDEMPTION-----");
-                printf("\n1. Change Password?");
-                printf("\n2. Exit?");
-                printf("\n Choose:");
-                scanf("%d", &m);
-                fgetc(stdin);
-                switch (m)
-                {
-                    case 1:
-                    {
-                        char verify[50];
-                        printf("Enter Verifier Code:\t");
-                        input(verify);
-                        p = fopen("P:\\invoice\\Users.txt", "r+");
-                        if (p == NULL)
-                        {
-                            printf("\n\nNo File Detected");
-                            break;
-                        }
-                        while (fread(&login, sizeof(struct user), 1, p))
-                        {
-                            if (strcmp(login.username, username) == 0 && strcmp(login.verify, verify) == 0)
-                            {
-                                printf("\nEnter New Password:");
-                                inputpass(login.password); // SEEK_SET for beginning of the file, SEEK_END end of file
-                                fseek(p, -(long)sizeof(struct user), SEEK_CUR); // SEEK_CUR means current position
-                                fwrite(&login, sizeof(struct user), 1, p);
-                                printf("\nPassword changed successfully.");
-                                fclose(p);
-                                goto end;
-                            }
-                        }
-                        printf("\n Incorrect Verifier Code.");
-                        fclose(p);
-                        exit(0);
-                    }
-                    case 2:
-                        printf("\n Ok BYE BYE");
-                        exit(0);
-
-                    default:
-                        printf("Wrong input");
-                        goto teta;
-                }
-            }
-            end:
-            break;
         }
-        case 3://deleting a particular file
+        break;
+        case 4://deleting a particular file
         	   printf("Redirecting Please Wait");
     		for (int q=0;q<3;q++) 
 			{
@@ -577,14 +605,14 @@ here:
         		if (strcmp(confirm_delete, "DELETE_CONFIRM") == 0) /*mathi delete_username bhannne array ma j type gareko thiyo tei namile samma u cant delete the files, 
         														   	this is done so that user doesn't accidentally delete their record	*/
 	    		{
-            		FILE *temp = fopen("P:\\invoice\\temp.txt","w");// creates the temp(new) file for transferring the 
+            		FILE *temp = fopen("temp.txt","w");// creates the temp(new) file for transferring the 
             		if (temp==NULL) 
 		    		{
                 		printf("Error creating temporary file");
                 		break;
             		}
 
-            		p=fopen("P:\\invoice\\Users.txt", "r");
+            		p=fopen("Users.txt", "r");
             		if (p==NULL) 
 		    		{
                 		printf("\n\nNo File Detected");
@@ -609,13 +637,13 @@ here:
             		fclose(temp);
             		if (deleted==1) 
 		    		{
-                		remove("P:\\invoice\\Users.txt");// yesle chai original file lai delete garxa (this remove and rename function is contained in the stdio.h header file)
-                		rename("P:\\invoice\\temp.txt", "P:\\invoice\\Users.txt");// renames the temporary file to the original file name, hence making the temp file your main file now
+                		remove("Users.txt");// yesle chai original file lai delete garxa (this remove and rename function is contained in the stdio.h header file)
+                		rename("temp.txt", "P:\\Login2\\Users.txt");// renames the temporary file to the original file name, hence making the temp file your main file now
                 		printf("\n\nRecord deleted successfully.");
             		} 
 		    		else 
 		    		{
-                		remove("P:\\invoice\\temp.txt");
+                		remove("temp.txt");
                 		printf("\n\nUsername not found.");
             		}
         		} 
@@ -625,7 +653,7 @@ here:
         		}    		
         	break;
         	
-        case 4:
+        case 5:
             printf("\n\n\t\t\t\t*****Thanks For The Visit*****\n");
             exit(0);
 
@@ -636,3 +664,233 @@ here:
     }
     return 0;
 }
+void admin()
+{
+	FILE *tp,*mp,*cp;
+	int adminc,menuc,choice;
+	int newp,find=0;
+	char irem[20],choicem,cprice[20];
+	flag:
+ 	    	system("cls");
+ 	    	fflush(stdin);
+ 	 	   printf("1.change menu\n"); 
+ 	 	   printf("2.view all the bills\n");
+ 	       printf("press b to go back\n");
+ 	       printf("What do u wanna do:");
+ 	       fflush(stdin);
+ 	       scanf("%d",&adminc);
+ 	       	
+ 	      system("cls");
+			
+ 	       switch(adminc)
+ 	        {
+ 		      case 1:
+ 			  {
+ 			    
+ 				printf("\n1.add item");
+ 				printf("\n2.remove item");
+ 				printf("\n3.change price");
+ 				printf("\n4.view current menu");
+ 				printf("\nenter what u wanna do");
+ 				scanf("%d",&menuc);
+ 				switch(menuc)
+ 				{
+ 					case(1):
+ 						{
+ 							flag1:
+ 							struct menus tempmenu;
+ 				            tp=fopen("menu.txt","a+");
+ 						    fflush(stdin);
+  							printf("\nEnter the name of item:");
+ 							gets(menu.item);
+ 							while(fread(&tempmenu,sizeof(tempmenu),1,tp)==1)
+ 							{
+ 								if(strcmp(tempmenu.item,menu.item)==0)
+ 								{
+ 									printf("The item already exists.Do u wanna change the price of the item");
+ 									scanf("%c",&choicem);
+ 									if(choicem=='y'||choicem=='Y')
+ 									{
+ 										goto flag3;
+									 }
+								 }
+							 }
+ 							printf("\nEnter the price of item:");
+ 							scanf("%d",&menu.price);
+ 							fwrite(&menu,sizeof(menu),1,tp);
+ 							printf("\ndo u wanna add anything more.if yes press y");
+ 							fflush(stdin);
+ 							scanf("%c",&menuc);
+ 							if(menuc=='Y'||menuc=='y')
+ 							{
+ 								goto flag1;
+ 								break;
+							 }
+							 else
+							 {  
+							    fclose(tp);
+							    Sleep(1000);
+							 	goto flag;
+							 	break;
+							 }
+ 							
+						 }
+					case(2):
+						{
+					      	flag2:
+								find=0;
+								tp=fopen("menu.txt","r");
+						  printf("\nenter the name of item u wanna remove");
+						  fflush(stdin);
+						  scanf("%s",irem);
+						  mp=fopen("tempmenu.txt","w");
+						  while(fread(&menu,sizeof(menu),1,tp)==1)
+						  {
+						  	if(strcmp(irem,menu.item)==0)
+						  	{
+						  		find=1;
+							  }
+							  else
+						  	{
+						  		fwrite(&menu,sizeof(menu),1,mp);
+							  }
+						  }
+						  if(find==0)
+						  {
+						  	printf("The item doesnt exist");
+						  	goto flag2;
+						  }
+						else{
+							  fclose(mp);
+							  fclose(tp);
+							  remove("menu.txt");
+							  rename("tempmenu.txt","menu.txt");
+							  printf("Item removed succesfully");
+							  printf("\nDo you wanna remove more item,if yes press y");
+                              fflush(stdin);
+	                          scanf("%c",&choice);
+	                          if(choice=='y'||choice=='Y')
+                            	{
+	                         	  goto flag2;
+                               	}
+							  else
+							  {
+							  	goto flag;
+							  }
+						}
+						  break;
+						}
+						case(3):
+							{
+								flag3:
+								find=0;
+								printf("\nenter the name of item you wanna change price of:");
+								fflush(stdin);
+								gets(cprice);
+								tp=fopen("menu.txt","a+");
+		                        mp=fopen("tempmenu.txt","a+");
+								while(fread(&menu,sizeof(menu),1,tp)==1)
+							    {
+							    	 if(strcmp(cprice, menu.item)!=0)
+							    	 {
+							    	 	fwrite(&menu,sizeof(menu),1,mp);
+							    	 	continue;
+									 }
+								  else if(strcmp(cprice, menu.item)==0)
+								  {
+								  	printf("enter the new price:");
+								  	scanf("%d",&newp);
+								  	menu.price=newp;
+								    
+                                    fwrite(&menu, sizeof(menu), 1, mp); // Write the updated record back to the file
+                                     find = 1;
+                                    	continue;
+								  }
+									
+								}
+								if(!find)
+								{
+									printf("item not found");
+				             	}
+				             	else
+				             	{
+				             		done:
+				             			fclose(tp);
+				             			fclose(mp);
+				             			remove("menu.txt");
+				             			rename("tempmenu.txt","menu.txt");
+								   printf("price changed succesfully!");
+						           printf("\nDo you wanna remove more item,if yes press y");
+						        
+                                   fflush(stdin);
+	                               scanf("%c",&choice);
+	                               if(choice=='y'||choice=='Y')
+                                 	{
+                            
+	                         	      goto flag3;
+                                 	}
+							        else
+							       {
+							       	fclose(tp);
+							  	      goto flag;
+							        }
+						      }
+						      break;
+						  }	
+						  case (4):
+						  	{
+						  		tp=fopen("menu.txt","a+");
+						  	    while(fread(&menu,sizeof(menu),1,tp)==1)
+	 	                           {
+	 	                             	printf("%s",menu.item);
+	 	                               	printf("%d",menu.price);
+	 	                               	printf("\n");
+		                            }
+									fclose(tp);	
+									break;
+							  }
+					break;
+				}
+					break;
+		      }
+		      case 2:
+		      	{
+		      		cp = fopen("order.txt", "r");
+                    if (cp == NULL)
+					 {
+                     printf("The file order.txt could not be opened\n");    
+                      }
+
+   					tp = fopen("customer.txt", "r");
+   					if (tp == NULL)
+				   {
+      					printf("The file customer.txt could not be opened\n");
+       					fclose(cp);
+       	 
+    				}
+					while(fread(&custdetail,sizeof(struct customers),1,tp)==1)
+					{
+					  	while(fread(&orderdetail,sizeof(struct menuorder),1,cp)==1)
+		      			{	
+		      				if(strcmp(custdetail.cname,orderdetail.custname)==0)
+		      				{
+		      		    		printf("Name %s\n",custdetail.cname);
+		      					printf("item %s\n",orderdetail.item);
+		      					printf("total %d\n",orderdetail.price);
+		      					printf("total= %d\n",custdetail.sumprice);
+    			        		printf("discount= %d\n",custdetail.discount);
+    		         			printf("net total= %d\n",custdetail.ntotal);
+    			        		printf("service tax= %d\n",custdetail.servicetax);
+    		         			printf("grand total=%d\n",custdetail.gtotal);
+		      					printf("\n\n");
+		      			break;
+		      				}
+					 	 }
+					}
+					  fclose(cp);
+					  fclose(tp);
+					  break;
+				  }
+            
+				}
+		   }
