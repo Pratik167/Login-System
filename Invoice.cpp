@@ -36,7 +36,7 @@ void generateBillTop(char name[50],char date[30])//just a bunch of prints
         printf("\n---------------------------------------");
         printf("\n\n");
 }
-void generateBillBody(char item[30],int qty, float price)//this chai displays the item that was ordered and the prices
+void generateBillMid(char item[30],int qty, float price)//this chai displays the item that was ordered and the prices
 {
     printf("%s\t\t",item); 
         printf("%d\t\t",qty); 
@@ -44,7 +44,7 @@ void generateBillBody(char item[30],int qty, float price)//this chai displays th
         printf("\n");
 }
 
-void generateBillFooter(float total)//yo chai paisa wala part ko lagi
+void generateBillBottom(float total)//yo chai paisa wala part ko lagi
 {
     printf("\n");
     float dis = 0.1*total;//10% discount
@@ -326,14 +326,14 @@ here:
                     flag = 1;
                     system("cls");
 
-                    // Add the restaurant billing system code here.
+                    //biling or invoice ko code chai from here 
                     int opt,n;
                     struct orders ord;
                     struct orders order;
                     char saveBill = 'y',contFlag = 'y';
                     char name[50];
                     FILE *fp;
-                    //dashboard
+                    //first display
                     while(contFlag == 'y')
                     {
                         system("cls");
@@ -373,20 +373,22 @@ here:
             scanf("%f",&ord.itm[i].price);
             total += ord.itm[i].qty * ord.itm[i].price;
         }
-
+		//invoice ko detail gareepaxi hune display ko lagi 
         generateBillTop(ord.customer,ord.date);
-        for(int i=0;i<ord.numOfItems;i++)
+        
+        for(int i=0;i<ord.numOfItems;i++)//kati ota  item order garyo teti samma chai yo loop chalxa
 		{
-            generateBillBody(ord.itm[i].item,ord.itm[i].qty,ord.itm[i].price);
+            generateBillMid(ord.itm[i].item,ord.itm[i].qty,ord.itm[i].price);
         }
-        generateBillFooter(total);
+        
+        generateBillBottom(total);
 
         printf("\nDo you want to save the invoice [y/n]:\t");
         scanf("%s",&saveBill);
 
-        if(saveBill == 'y')
+        if(saveBill == 'y'||saveBill == 'Y')//invoice save garne bhayee y press garne
 		{
-            fp = fopen("P:\\invoice\\RestaurantBill.txt","a+");
+            fp = fopen("P:\\invoice\\RestaurantBill.txt","a+");//if presseeed y it opens this restaurantbill.txt file ani fwrite le invoice save garxa
             fwrite(&ord,sizeof(struct orders),1,fp);
             if(fwrite != 0)
             printf("\nSuccessfully saved");
@@ -406,10 +408,10 @@ here:
             generateBillTop(order.customer,order.date);
             for(int i=0;i<order.numOfItems;i++)
 			{
-                generateBillBody(order.itm[i].item,order.itm[i].qty,order.itm[i].price);
+                generateBillMid(order.itm[i].item,order.itm[i].qty,order.itm[i].price);
                 tot+=order.itm[i].qty * order.itm[i].price;
             }
-            generateBillFooter(tot);
+            generateBillBottom(tot);
         }
         fclose(fp);
         break;
@@ -429,10 +431,10 @@ here:
             generateBillTop(order.customer,order.date);
             for(int i=0;i<order.numOfItems;i++)
 			{
-                generateBillBody(order.itm[i].item,order.itm[i].qty,order.itm[i].price);
+                generateBillMid(order.itm[i].item,order.itm[i].qty,order.itm[i].price);
                 total+=order.itm[i].qty * order.itm[i].price;
             }
-            generateBillFooter(total);
+            generateBillBottom(total);
             invoiceFound = 1;
             }
         
